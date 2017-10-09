@@ -19,7 +19,10 @@ type S3Loader struct {
 // Prepare - prepering
 func (loader *S3Loader) Prepare(params ...interface{}) error {
 	if len(params) > 1 {
-		mapstructure.Decode(params[0], loader.runnerData)
+		err := mapstructure.Decode(params[0], loader.runnerData)
+		if err != nil {
+			return err
+		}
 		packerMainMap, ok := params[1].(map[interface{}]interface{})
 		if !ok {
 			return fmt.Errorf("S3Loader: Can't get packer parameters,type %s,\n%v", reflect.TypeOf(params[1]), params[1])
@@ -45,7 +48,7 @@ func (loader *S3Loader) Provision(ui packer.Ui, communicator packer.Communicator
 		return err
 	}
 	ui.Message(fmt.Sprintf("loader data: %v", loader.runnerData))
-	ok, fullPathName, fileName, err := aws.LoadLastObjectFromBucket("btrz-scaling-repo", "/home/tal/temp", "connex", sess)
+	ok, fullPathName, fileName, err := aws.LoadLastObjectFromBucket("btrz-scaling-repo", loader.runnerData.TempFolder, "connex", sess)
 	if !ok {
 		ui.Error("couldn't connect to s3")
 		return errors.New("not ok returning s3 object")
