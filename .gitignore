@@ -1,0 +1,5 @@
+pkg/
+bin/
+secrets/
+dump/
+temp/
