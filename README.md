@@ -8,7 +8,7 @@ The end file will be renamed to `packer-provisioner-s3loader`, since this is the
 
 Using parameters
 ----------------------
-
+sample usage of the parameters can be found in the packer-files folder
 
 Running packer
 ----------------------
