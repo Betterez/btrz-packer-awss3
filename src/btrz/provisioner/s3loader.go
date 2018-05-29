@@ -16,11 +16,21 @@ type S3Loader struct {
 	awsInfo    aws.BtrzAwsAuthenticationInfo
 }
 
+func logLine(line string) {
+	file, err := os.OpenFile("logfile.log", os.O_APPEND+os.O_CREATE, 0755)
+	if err != nil {
+		return
+	}
+	file.WriteString(line)
+	file.Close()
+}
+
 // Prepare - prepering
 func (loader *S3Loader) Prepare(params ...interface{}) error {
 	if len(params) > 1 {
-		err := mapstructure.Decode(params[0], loader.runnerData)
+		err := mapstructure.Decode(params[0], &loader.runnerData)
 		if err != nil {
+			logLine(fmt.Sprint(err))
 			return err
 		}
 		packerMainMap, ok := params[1].(map[interface{}]interface{})
@@ -31,11 +41,11 @@ func (loader *S3Loader) Prepare(params ...interface{}) error {
 		if !ok {
 			return fmt.Errorf("Can't get aws parameters list %s", reflect.TypeOf(packerMainMap["packer_user_variables"]))
 		}
-		loader.awsInfo.AwsKey, ok = userInfoMap["aws_access_key"].(string)
+		loader.awsInfo.AwsKey, ok = userInfoMap["access_key"].(string)
 		if !ok {
 			return fmt.Errorf("Can't get aws parameters %s", reflect.TypeOf(packerMainMap["packer_user_variables"]))
 		}
-		loader.awsInfo.AwsSecret = userInfoMap["aws_secret_key"].(string)
+		loader.awsInfo.AwsSecret = userInfoMap["secret_key"].(string)
 	}
 
 	return nil
@@ -48,7 +58,7 @@ func (loader *S3Loader) Provision(ui packer.Ui, communicator packer.Communicator
 		return err
 	}
 	ui.Message(fmt.Sprintf("loader data: %v", loader.runnerData))
-	ok, fullPathName, fileName, err := aws.LoadLastObjectFromBucket("btrz-scaling-repo", loader.runnerData.TempFolder, "connex", sess)
+	ok, fullPathName, fileName, err := aws.LoadLastObjectFromBucket(loader.runnerData.BucketName, loader.runnerData.TempFolder, "connex", sess)
 	if !ok {
 		ui.Error("couldn't connect to s3")
 		return errors.New("not ok returning s3 object")

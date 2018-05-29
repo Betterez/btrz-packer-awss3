@@ -1,7 +1,6 @@
 default:
 	@export GOPATH=$$GOPATH:$$(pwd)  && go install btrz-packer-awss3
-	@cp bin/btrz-packer-awss3 /home/tal/temp/packer-provisioner-s3loader
-	@cp packer-files/sample-provisioner.json /home/tal/temp/
+	@cp bin/btrz-packer-awss3 ~/.packer.d/plugins/packer-provisioner-s3loader
 run: default
 	@bin/btrz-packer-awss3
 	@echo ""

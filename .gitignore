@@ -3,3 +3,4 @@ bin/
 secrets/
 dump/
 temp/
+logfile.log
