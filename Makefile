@@ -11,6 +11,8 @@ clean:
 	@rm -rf pkg
 edit:
 	@export GOPATH=$$GOPATH:$$(pwd)  && atom .
+edit2:
+	@export GOPATH=$$GOPATH:$$(pwd)  && code .
 test:
 	@export GOPATH=$$GOPATH:$$(pwd) && go test ./...
 setup:

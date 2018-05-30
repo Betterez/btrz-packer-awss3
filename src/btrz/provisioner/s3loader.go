@@ -4,10 +4,11 @@ import (
 	"btrz/aws"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/packer/packer"
-	"github.com/mitchellh/mapstructure"
 	"os"
 	"reflect"
+
+	"github.com/hashicorp/packer/packer"
+	"github.com/mitchellh/mapstructure"
 )
 
 // S3Loader - s3 loader provisioner
@@ -39,13 +40,13 @@ func (loader *S3Loader) Prepare(params ...interface{}) error {
 		}
 		userInfoMap, ok := packerMainMap["packer_user_variables"].(map[interface{}]interface{})
 		if !ok {
-			return fmt.Errorf("Can't get aws parameters list %s", reflect.TypeOf(packerMainMap["packer_user_variables"]))
+			return fmt.Errorf("warning1 Can't get aws parameters list %s", reflect.TypeOf(packerMainMap["packer_user_variables"]))
 		}
-		loader.awsInfo.AwsKey, ok = userInfoMap["access_key"].(string)
+		loader.awsInfo.AwsKey, ok = userInfoMap["aws_access_key"].(string)
 		if !ok {
-			return fmt.Errorf("Can't get aws parameters %s", reflect.TypeOf(packerMainMap["packer_user_variables"]))
+			return fmt.Errorf("can't get access key from aws parameters %s\r\n params=%v", reflect.TypeOf(packerMainMap["packer_user_variables"]), params[1])
 		}
-		loader.awsInfo.AwsSecret = userInfoMap["secret_key"].(string)
+		loader.awsInfo.AwsSecret = userInfoMap["aws_secret_key"].(string)
 	}
 
 	return nil
